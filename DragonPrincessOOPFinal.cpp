@@ -15,8 +15,8 @@ Player characterCreation();
 Dragon dragonCreation();
 vector<Item> createAllItems();
 bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, vector<Item>& items, bool& alive, int nRandomEvent);
-void enemyBattle(Player player, Inventory& inv, vector<Item>& items, Enemy enemy, int turn);
-void playerDecision(Player player, Inventory& inv, vector<Item>& items, Enemy enemy);
+void enemyBattle(Player& player, Inventory& inv, vector<Item>& items, Enemy& enemy, int turn);
+void playerDecision(Player& player, Inventory& inv, vector<Item>& items, Enemy& enemy);
 void dialogues(int numEvent, int counter, int randomNum);
 void playerCheck(Player&& player, Inventory&& inv, string c);
 //Missing: Inventory, Items, Enemy
@@ -562,7 +562,7 @@ bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, vec
 		}
 	}	
 }
-void enemyBattle(Player player, Inventory& inv, vector<Item>& items, Enemy enemy, int turn)
+void enemyBattle(Player& player, Inventory& inv, vector<Item>& items, Enemy& enemy, int turn)
 {
 	if (turn % 2 == 0)
 	{
@@ -574,7 +574,7 @@ void enemyBattle(Player player, Inventory& inv, vector<Item>& items, Enemy enemy
 		cout << "Whack! " << enemy.getName() << " attacks!" << endl;
 	}
 }
-void playerDecision(Player player, Inventory& inv, vector<Item>& items, Enemy enemy) {
+void playerDecision(Player& player, Inventory& inv, vector<Item>& items, Enemy& enemy) {
 	cout << player.getName() << "'s Turn" << endl;
 	while (true) {
 		cout << "Options: Inventory   Attack   Profile" << endl;
@@ -582,6 +582,7 @@ void playerDecision(Player player, Inventory& inv, vector<Item>& items, Enemy en
 		option = setLower(option);
 		if (option == "inventory") {
 			inv.PrintInventory();
+			bool turnEnd = false;
 			while (true) {
 				cout << "Type the name of the item you want to use. Or \"back\" to return." << endl;
 				option = getInput();
@@ -591,19 +592,26 @@ void playerDecision(Player player, Inventory& inv, vector<Item>& items, Enemy en
 							inv.UseItem(item);
 							if (item.GetEffect() == "heal") {
 								player.setHp(player.getStat(0) + item.GetEffectValue());
+								turnEnd = true;
+								break;
 							}
 							else if (item.GetEffect() == "damage") {
 								enemy.setHP(enemy.getHP() - item.GetEffectValue());
+								turnEnd = true;
+								break;
 							}
 						}
 					}
 				}
-				if (setLower(option) == "back") {
+				option = setLower(option);
+				if (option == "back") {
 					break;
 				}
 				cout << "Invalid Input" << endl;
 			}
-			break;
+			if (turnEnd) {
+				break;
+			}
 		}
 		else if (option == "attack") {
 			enemy.setHP(enemy.getHP() - player.getStat(1));
