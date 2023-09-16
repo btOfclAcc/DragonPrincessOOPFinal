@@ -46,6 +46,16 @@ void Inventory::PrintInventory()
     cout << endl;
 }
 
+bool Inventory::SearchInventory(Item t_item)
+{
+    for (invenItem invenItem : inventory) {
+        if (invenItem.item == t_item) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Inventory::AddItem(Item t_item)
 {
     bool itemFound = false;

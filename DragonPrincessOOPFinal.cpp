@@ -14,9 +14,9 @@ bool confirmInput();
 Player characterCreation();
 Dragon dragonCreation();
 vector<Item> createAllItems();
-bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, bool& alive, int nRandomEvent);
-void enemyBattle(Player player, Enemy enemy, int turn);
-void playerDecision(Player player, Enemy enemy);
+bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, vector<Item>& items, bool& alive, int nRandomEvent);
+void enemyBattle(Player player, Inventory& inv, vector<Item>& items, Enemy enemy, int turn);
+void playerDecision(Player player, Inventory& inv, vector<Item>& items, Enemy enemy);
 void dialogues(int numEvent, int counter, int randomNum);
 void playerCheck(Player&& player, Inventory&& inv, string c);
 //Missing: Inventory, Items, Enemy
@@ -45,7 +45,7 @@ int main()
 	startScreen();
 	system("CLS");
 	Inventory playerInv;
-
+	vector<Item> items = createAllItems();
 
 	//Player creation
 	Player player = characterCreation();
@@ -138,7 +138,7 @@ int main()
 			cout << endl;
 			cout << "The princess exchanged a nervous glance with "<< dragon.getName() <<", their escape plans hanging in the balance.It was a standoff between determinationand duty, and they were about to find out who would prevail." << endl;
 
-			predefEvent(eventCounter, player, guard, playerInv, alive, nRandomEvent);
+			predefEvent(eventCounter, player, guard, playerInv, items, alive, nRandomEvent);
 		}
 		else if (eventCounter == 2)//Setting enemy Hp and Ap
 		{
@@ -153,7 +153,7 @@ int main()
 					eAtk = witch.getAtk();
 
 					cout << "Seconds later an invisible barrier appeared in front of them, stopping them completely. The evil witch, "<< kingName <<"'s personal enchantress, appeared.";
-					predefEvent(eventCounter, player, witch, playerInv, alive, nRandomEvent);
+					predefEvent(eventCounter, player, witch, playerInv, items, alive, nRandomEvent);
 				}
 				else if (nRandomEvent == 2)
 				{
@@ -161,7 +161,7 @@ int main()
 					eAtk = rhonda.getAtk();
 					cout << "Seconds later a beautiful female dragon appears out of nowhere and your partner falls in love at first sight, she winks her eye at him, but you notice something strange about that dragon... she emanates some weird and almost invisible magic powder..." << endl;
 					cout << "Wait...Could she be... The shapeshifter witch!" << endl;
-					predefEvent(eventCounter, player, rhonda, playerInv, alive, nRandomEvent);
+					predefEvent(eventCounter, player, rhonda, playerInv, items, alive, nRandomEvent);
 				}
 				else if (nRandomEvent == 3)
 				{
@@ -170,7 +170,7 @@ int main()
 					cout << "Second later a handsome prince materializes, riding a white horse, and Mary is captivated by her deep, masculine voice and striking blue eyes. He asks her to go with him, assuring her that he will take her to his kingdom and keep her safe." <<endl;
 					cout << "However, in the distance you see your father's men hiding in the bushes, waiting for you to pass by to attack.";
 					cout << "You try to flee but you can't anymore! You are surrounded, it's time to fight..." << endl;
-					predefEvent(eventCounter, player, prince, playerInv, alive, nRandomEvent);
+					predefEvent(eventCounter, player, prince, playerInv, items, alive, nRandomEvent);
 				}
 		} 
 		else if (eventCounter == 3)//Final Enemy and setting enemy Hp and Ap
@@ -186,7 +186,7 @@ int main()
 			cout << "He sought to defeat the dragon and capture the princess, intending to deliver both their heads to the vengeful king.";
 			cout << "The looming castle stood as a stark backdrop to the impending battle, with the fate of the kingdom hanging in the balance." << endl;
 
-			predefEvent(eventCounter, player, knight, playerInv, alive, nRandomEvent);
+			predefEvent(eventCounter, player, knight, playerInv, items, alive, nRandomEvent);
 		}
 		else //The End
 		{
@@ -462,14 +462,13 @@ With a sigh, she strode over and sat next to her companion, gently petting its h
 vector<Item> createAllItems() {
 	vector<Item> items;
 	items.push_back(Item("Banana", "damage", 15, 1, "A classic, a lot of folks underestimate its power.", "Slip! The banana reminds it victim not to underestimate it."));
-	items.push_back(Item("Health Potion", "heal", 15, 1, "A green potion, used by all folks alike, plenty are saved by its magical touch.", "Swallow. Touch of the health potion relieves your injuries."));
-	items.push_back(Item("Shield", "block", 15, 2, "A sturdy shield, capable of blocking enemy attacks.", "Thud! Enemy attack blocked!"));
-	items.push_back(Item("Enchanted Sword", "damage", 15, -1, "A powerful blade with magic edged into it, you can almost hear the magic hum.", "Swish! The enchanted blade strikes true and goes through armour like butter."));
+	items.push_back(Item("Health Potion", "heal", 100, 1, "A green potion, used by all folks alike, plenty are saved by its magical touch.", "Swallow. Touch of the health potion relieves your injuries."));
+	items.push_back(Item("Shield", "heal", 50, 2, "A sturdy shield, capable of improving defense.", "Ha! I am shielded, try getting me now!"));
+	items.push_back(Item("Enchanted Sword", "damage", 50, -1, "A powerful blade with magic edged into it, you can almost hear the magic hum.", "Swish! The enchanted blade strikes true and goes through armour like butter."));
 	return items;
 }
-bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, bool& alive, int nRandomEvent)
+bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, vector<Item>& items, bool& alive, int nRandomEvent)
 {
-	string stemp;
 	int counter = 1;
 	if (numEvent == 1) //Guard Event
 	{
@@ -480,11 +479,8 @@ bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, boo
 			//stats print
 			cout << "Player HP: " << player.getStat(0) << endl;
 			cout << "Enemy HP: " << enemy.getHP() << endl;
-			
-			//decision
-			stemp = getInput();
 
-			enemyBattle(player, enemy, counter);	//Individual battles
+			enemyBattle(player, inv, items, enemy, counter);	//Individual battles
 			dialogues(numEvent, counter, nRandomEvent);//Individual battle dialogues
 		}
 		if (player.getStat(0) == 0)
@@ -506,10 +502,7 @@ bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, boo
 			cout << "Player HP: " << player.getStat(0) << endl;
 			cout << "Enemy HP: " << enemy.getHP() << endl;
 
-			//decision
-			stemp = getInput();
-
-			enemyBattle(player, enemy, counter);	//Individual battles
+			enemyBattle(player, inv, items, enemy, counter);	//Individual battles
 			dialogues(numEvent, counter, nRandomEvent);//Individual battle dialogues
 		}
 		if (nRandomEvent == 1) //Witch
@@ -569,19 +562,61 @@ bool predefEvent(int numEvent, Player& player, Enemy& enemy, Inventory& inv, boo
 		}
 	}	
 }
-void enemyBattle(Player player, Enemy enemy, int turn)
+void enemyBattle(Player player, Inventory& inv, vector<Item>& items, Enemy enemy, int turn)
 {
 	if (turn % 2 == 0)
 	{
-		enemy.setHP(enemy.getHP() - player.getStat(1));
+		playerDecision(player, inv, items, enemy);
 	}
 	else
 	{
 		player.setHp(player.getStat(0) - enemy.getAtk());
+		cout << "Whack! " << enemy.getName() << " attacks!" << endl;
 	}
 }
-void playerDecision(Player player, Enemy enemy) {
-	
+void playerDecision(Player player, Inventory& inv, vector<Item>& items, Enemy enemy) {
+	cout << player.getName() << "'s Turn" << endl;
+	while (true) {
+		cout << "Options: Inventory   Attack   Profile" << endl;
+		string option = getInput();
+		option = setLower(option);
+		if (option == "inventory") {
+			inv.PrintInventory();
+			while (true) {
+				cout << "Type the name of the item you want to use. Or \"back\" to return." << endl;
+				option = getInput();
+				for (Item item : items) {
+					if (item.GetName() == option) {
+						if (inv.SearchInventory(item)) {
+							inv.UseItem(item);
+							if (item.GetEffect() == "heal") {
+								player.setHp(player.getStat(0) + item.GetEffectValue());
+							}
+							else if (item.GetEffect() == "damage") {
+								enemy.setHP(enemy.getHP() - item.GetEffectValue());
+							}
+						}
+					}
+				}
+				if (setLower(option) == "back") {
+					break;
+				}
+				cout << "Invalid Input" << endl;
+			}
+			break;
+		}
+		else if (option == "attack") {
+			enemy.setHP(enemy.getHP() - player.getStat(1));
+			cout << "Whack! " << player.getName() << " attacks!" << endl;
+			break;
+		}
+		else if (option == "profile") {
+			player.showProfile();
+		}
+		else {
+			cout << "Invalid Input" << endl;
+		}
+	}
 }
 void dialogues(int numEvent, int counter, int nRandomEvent)
 {

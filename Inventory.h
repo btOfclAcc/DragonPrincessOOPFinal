@@ -30,6 +30,7 @@ public:
 	void SetInventory(vector<invenItem>);
 
 	void PrintInventory();
+	bool SearchInventory(Item);
 	void AddItem(Item);
 	void UseItem(Item);
 };
