@@ -34,7 +34,9 @@ void Inventory::PrintInventory()
             }
             cout << invenItem.item.GetName() << " x" << invenItem.count << endl;
             cout << invenItem.item.GetDescription() << endl;
-            cout << "Uses: " << invenItem.uses << "/" << invenItem.item.GetUses() << endl;
+            if (invenItem.item.GetUses() > 0) {
+                cout << "Uses: " << invenItem.uses << "/" << invenItem.item.GetUses() << endl;
+            }
             if (first) {
                 first = false;
             }

@@ -29,7 +29,7 @@ public:
 	int getStat(int stat);
 
 	//Prints
-	void showProfile(Dragon&& dragon);
+	void showProfile();
 
 	//Setter & the like
 	void setHp(int val);

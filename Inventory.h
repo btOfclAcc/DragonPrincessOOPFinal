@@ -11,6 +11,13 @@ private:
 		Item item;
 		int uses;
 		int count;
+
+		inline bool operator==(invenItem a) {
+			if (a.item == item)
+				return true;
+			else
+				return false;
+		}
 	};
 
 	vector<invenItem> inventory;

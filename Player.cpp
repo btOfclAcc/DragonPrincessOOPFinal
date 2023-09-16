@@ -69,7 +69,7 @@ int Player::getStat(int stat)
 }
 
 //Prints
-void Player::showProfile(Dragon&& dragon)
+void Player::showProfile()
 {
 	cout << "---[ PROFILE ]---" << endl;
 	cout << "Princess " << getName() << ", the " << getClass() << endl; //name and class
@@ -79,34 +79,34 @@ void Player::showProfile(Dragon&& dragon)
 	cout << "-- stats --" << endl; //stats
 	cout << "Health: " << getStat(0) << endl;
 	cout << "Attack: " << getStat(1) << endl;
-	cout << "Defense: " << getStat(2) << endl;
 
-	cout << endl; //spacing
+	//RMOVED THIS FEATURE BECAUSE IT WOULD NOT WORK!
+	//cout << endl; //spacing
 
-	cout << "---[ DRAGON ]---" << endl;
-	cout << dragon.getName() << endl;
-	cout << "Appearance: " << dragon.getScales() << " scales, " << dragon.getEyes() << " eyes." << endl;
-	//Randomly generated flavor text
-	srand(time(NULL));
-	int txt = rand() % 3;
-	switch (txt)
-	{
-	case 0:
-		cout << dragon.getName() << " is napping nearby." << endl;
-		break;
-	case 1:
-		cout << dragon.getName() << " is juggling rocks somehow." << endl;
-		break;
-	case 2:
-		cout << dragon.getName() << " nibbles on her dress." << endl;
-		break;
-	case 3:
-		cout << dragon.getName() << " sniffs you." << endl;
-		break;
-	default:
-		cout << dragon.getName() << " sits nicely." << endl;
-		break;
-	}
+	//cout << "---[ DRAGON ]---" << endl;
+	//cout << dragon.getName() << endl;
+	//cout << "Appearance: " << dragon.getScales() << " scales, " << dragon.getEyes() << " eyes." << endl;
+	////Randomly generated flavor text
+	//srand(time(NULL));
+	//int txt = rand() % 3;
+	//switch (txt)
+	//{
+	//case 0:
+	//	cout << dragon.getName() << " is napping nearby." << endl;
+	//	break;
+	//case 1:
+	//	cout << dragon.getName() << " is juggling rocks somehow." << endl;
+	//	break;
+	//case 2:
+	//	cout << dragon.getName() << " nibbles on her dress." << endl;
+	//	break;
+	//case 3:
+	//	cout << dragon.getName() << " sniffs you." << endl;
+	//	break;
+	//default:
+	//	cout << dragon.getName() << " sits nicely." << endl;
+	//	break;
+	//}
 }
 
 //Setters
